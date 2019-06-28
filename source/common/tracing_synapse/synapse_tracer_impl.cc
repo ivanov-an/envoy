@@ -17,6 +17,20 @@
 namespace Envoy {
 namespace Tracing {
 
+static bool startsWith(std::string const &str, std::string const &prefix) {
+   return str.compare(0, prefix.length(), prefix) == 0;
+}
+
+static bool endsWith(std::string const &str, std::string const &suffix) {
+  if (str.length() >= suffix.length()) {
+    return (0 == str.compare (str.length() - suffix.length(), suffix.length(), suffix));
+  } else {
+    return false;
+  }
+}
+
+const std::string SynapseTracerUtility::SynapsePrefix = "x-synapse-";
+const std::string SynapseTracerUtility::BinarySuffix = "-bin";
 
 void SynapseTracerUtility::fillSpan(Span& span, const Http::HeaderMap* request_headers,
                                     const Http::HeaderMap* response_headers,
@@ -24,17 +38,36 @@ void SynapseTracerUtility::fillSpan(Span& span, const Http::HeaderMap* request_h
                                     const StreamInfo::StreamInfo& stream_info,
                                     const Config& tracing_config) {
   if (request_headers) {
-    // TODO
+    SynapseTracerUtility::addSynapseTagsFromHeaders(span, request_headers);
   }
 
   if (response_headers) {
-    // TODO
+    SynapseTracerUtility::addSynapseTagsFromHeaders(span, response_headers);
   }
 
   if (response_trailers) {
-    // TODO
+    SynapseTracerUtility::addSynapseTagsFromHeaders(span, response_trailers);
   }
 }
+
+void addSynapseTagsFromHeaders(Span& span, const Http::HeaderMap* headers) {
+  headers->iterate(
+    [](const Http::HeaderEntry& header, void* context) -> {
+      std::string key = std::string(header.key().getStringView());
+      if (startsWith(key, SynapsePrefix)) {
+        if (endsWith(key, BinarySuffix)) {
+          // TODO
+        } else {
+          // TODO
+        }
+      }
+      return Http::HeaderMap::Iterate::Continue;
+    },
+    &span
+  )
+}
+
+
 
 } // namespace Tracing
 } // namespace Envoy

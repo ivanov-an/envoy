@@ -19,9 +19,6 @@ namespace Tracing {
  */
 class SynapseTracingTagNames {
 public:
-  // Synapse Tracing Header prefix
-  const std::string Prefix = "x-synapse-";
-
   // Synapse additional tags
   const std::string GrpcStatus = "response.grpc_status";
   const std::string GrpcMessage = "response.grpc_message";
@@ -31,6 +28,11 @@ using SynapseTags = ConstSingleton<SynapseTracingTagNames>;
 
 class SynapseTracerUtility {
 public:
+  // Synapse Tracing Header prefix
+  static const std::string SynapsePrefix;
+  // Binary header suffix
+  static const std::string BinarySuffix;
+
   /**
    * Fill in span tags based on the synapse headers.
    */
@@ -39,6 +41,8 @@ public:
                            const Http::HeaderMap* response_trailers,
                            const StreamInfo::StreamInfo& stream_info,
                            const Config& tracing_config);
+private:
+  static void addSynapseTagsFromHeaders(Span& span, const Http::HeaderMap* headers);
 };
 
 } // namespace Tracing

@@ -478,6 +478,9 @@ ConnectionManagerImpl::ActiveStream::~ActiveStream() {
   }
 
   if (active_span_) {
+    Tracing::SynapseTracerUtility::fillSpan(*active_span_, request_headers_.get(), 
+                                            response_headers_.get(), response_trailers_.get(),
+                                            stream_info_, *this);
     Tracing::HttpTracerUtility::finalizeSpan(*active_span_, request_headers_.get(), stream_info_,
                                              *this);
   }

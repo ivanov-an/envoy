@@ -23,7 +23,7 @@ static bool startsWith(std::string const &str, std::string const &prefix) {
 
 static bool endsWith(std::string const &str, std::string const &suffix) {
   if (str.length() >= suffix.length()) {
-    return (0 == str.compare (str.length() - suffix.length(), suffix.length(), suffix));
+    return (0 == str.compare(str.length() - suffix.length(), suffix.length(), suffix));
   } else {
     return false;
   }
@@ -50,7 +50,7 @@ void SynapseTracerUtility::fillSpan(Span& span, const Http::HeaderMap* request_h
   }
 }
 
-void addSynapseTagsFromHeaders(Span& span, const Http::HeaderMap* headers) {
+void SynapseTracerUtility::addSynapseTagsFromHeaders(Span& span, const Http::HeaderMap* headers) {
   headers->iterate(
     [](const Http::HeaderEntry& header, void* context) -> {
       std::string key = std::string(header.key().getStringView());
@@ -59,6 +59,8 @@ void addSynapseTagsFromHeaders(Span& span, const Http::HeaderMap* headers) {
           // TODO
         } else {
           // TODO
+          span.setTag(Tracing::Tags::get().GuidXRequestId, std::string(header.value().getStringView()));
+
         }
       }
       return Http::HeaderMap::Iterate::Continue;
@@ -67,7 +69,9 @@ void addSynapseTagsFromHeaders(Span& span, const Http::HeaderMap* headers) {
   )
 }
 
+std::string& SynapseTracerUtility::headerNameToTagName(const std::string& headerName) {
 
+}
 
 } // namespace Tracing
 } // namespace Envoy

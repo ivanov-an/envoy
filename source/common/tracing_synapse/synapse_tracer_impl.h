@@ -43,6 +43,7 @@ public:
                            const Config& tracing_config);
 private:
   static void addSynapseTagsFromHeaders(Span& span, const Http::HeaderMap* headers);
+  static std::string& headerNameToTagName(const std::string &headerName);
 };
 
 } // namespace Tracing
